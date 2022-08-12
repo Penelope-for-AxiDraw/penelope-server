@@ -42,8 +42,8 @@ def axi_plot(file):
   ad = axidraw.AxiDraw()
   # ad.plot_setup()
   ad.plot_setup(local_folder + file)
-  ad.options.speed_pendown = 20
-  # ad.options.mode = "toggle"
+  ad.options.speed_pendown = 12
+  ad.options.reordering = 1
   ad.plot_run()
 
 def run_mode(mode):
@@ -51,15 +51,6 @@ def run_mode(mode):
     ad.plot_setup()
     ad.options.mode = mode
     ad.plot_run()
-
-# def run_mode_manual(option):
-#     ad = axidraw.AxiDraw()
-#     ad.plot_setup()
-#     ad.options.mode = "manual"
-#     ad.options.manual_cmd = option
-#     ad.plot_run()
-#     axidraw_list = ad.name_list
-#     sock.send("deviceName:" + axidraw_list[0])
 
 def get_name():
     ad = axidraw.AxiDraw()
@@ -70,6 +61,15 @@ def get_name():
     axidraw_list = ad.name_list
     return axidraw_list[0]
 
+def get_pen_state():
+    ad = axidraw.AxiDraw()
+    ad.interactive()
+    ad.connect()
+    # Query machine pen state
+    pen_up = ad.current_pen()
+    ad.disconnect()
+    return str(pen_up)
+
 async def listen_messages(sock, path):
     while True:
         msg = await sock.recv()
@@ -78,9 +78,15 @@ async def listen_messages(sock, path):
             device_name = get_name()
             status = json.dumps({'deviceName': device_name})
             await sock.send(status)
+        elif (msg == 'get_pen_state'):
+            # device_name = get_name()
+            pen_up = get_pen_state()
+            status = json.dumps({'penUp': pen_up})
+            await sock.send(status)
         else:
             try:
                 process_command(msg)
+
             except (ValueError, KeyError, TypeError):
                 print("Data format error")
 
@@ -93,9 +99,6 @@ def process_command(message):
     
     if(action == 'align'):
         run_mode('align')
-
-    if(action == 'get_name'):
-        run_mode_manual('list_names')
     
     if(action == 'plot'):
         file_url = cmd[1]
