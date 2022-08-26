@@ -5,12 +5,9 @@
 # Receive data from a browser via WebSocket
 
 import asyncio
-import datetime
 import websockets
 import requests
 import json
-import colorsys
-import sys
 from pyaxidraw import axidraw 
 
 print("Ready to receive AxiDraw commands via WebSocket")
@@ -22,10 +19,6 @@ PORT = 5678
 # Local folder to save data
 local_folder = 'files/'
 
-# Remote location of file to retrieve
-root_url = 'https://gist.githubusercontent.com/'
-content_path = 'computershawn/f8c1892bbf88a4b70924121f51df58ee/raw/d284d74c9e1473b1a87305fc3bd3aa94d160bb87/'
-
 def get_file(remote_url, file_name):
   # Make http request for remote file data
   data = requests.get(remote_url + file_name)
@@ -35,12 +28,11 @@ def get_file(remote_url, file_name):
     # Save file data to local copy
     with open(local_folder + file_name, 'wb') as file:
       file.write(data.content)
-    print('Downloaded the file')
+      # print('Downloaded the file')
 
 def axi_plot(file):
   print('Plotting with AxiDraw!')
   ad = axidraw.AxiDraw()
-  # ad.plot_setup()
   ad.plot_setup(local_folder + file)
   ad.options.speed_pendown = 12
   ad.options.reordering = 1
@@ -75,8 +67,11 @@ async def listen_messages(sock, path):
         msg = await sock.recv()
         await sock.send(json.dumps({'greeting': 'Hi, received your command.'}))
         if (msg == 'get_name'):
-            device_name = get_name()
-            status = json.dumps({'deviceName': device_name})
+            try:
+                device_name = get_name()
+                status = json.dumps({'deviceName': device_name})
+            except:
+                status = json.dumps({'deviceName': 'no device name'})
             await sock.send(status)
         elif (msg == 'get_pen_state'):
             # device_name = get_name()
