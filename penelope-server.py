@@ -12,8 +12,10 @@ from pyaxidraw import axidraw
 
 print("Ready to receive AxiDraw commands via WebSocket")
 
-# ADDR = 'localhost'
-ADDR = '10.0.1.25'
+# TBD find the best way to get this device's IP address
+# temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-8')
+# ADDR = temp.stdout.split(' ')[0]
+ADDR = '10.0.1.19'
 PORT = 5678
 
 # Local folder to save data
@@ -62,22 +64,22 @@ def get_pen_state():
     ad.disconnect()
     return str(pen_up)
 
-async def listen_messages(sock, path):
+async def listen_messages(websocket):
     while True:
-        msg = await sock.recv()
-        await sock.send(json.dumps({'greeting': 'Hi, received your command.'}))
+        msg = await websocket.recv()
+        await websocket.send(json.dumps({'greeting': 'Hi, received your command.'}))
         if (msg == 'get_name'):
             try:
                 device_name = get_name()
                 status = json.dumps({'deviceName': device_name})
             except:
                 status = json.dumps({'deviceName': 'no device name'})
-            await sock.send(status)
+            await websocket.send(status)
         elif (msg == 'get_pen_state'):
             # device_name = get_name()
             pen_up = get_pen_state()
             status = json.dumps({'penUp': pen_up})
-            await sock.send(status)
+            await websocket.send(status)
         else:
             try:
                 process_command(msg)
@@ -101,8 +103,8 @@ def process_command(message):
         get_file(file_url, file_name)
         axi_plot(file_name)
 
+async def main():
+    async with websockets.serve(listen_messages, ADDR, PORT):
+        await asyncio.Future()  # run forever
 
-start_server = websockets.serve(listen_messages, ADDR, PORT)
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
-
+asyncio.run(main())
