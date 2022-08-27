@@ -5,17 +5,18 @@
 # Receive data from a browser via WebSocket
 
 import asyncio
-import websockets
-import requests
 import json
 from pyaxidraw import axidraw 
+import requests
+import subprocess
+import websockets
 
 print("Ready to receive AxiDraw commands via WebSocket")
 
-# TBD find the best way to get this device's IP address
-# temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-8')
-# ADDR = temp.stdout.split(' ')[0]
-ADDR = '10.0.1.19'
+# ADDR = '10.0.1.19'
+# NOTE: This 'hostname -I' might not work on MacOS?
+temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-8')
+ADDR = temp.stdout.split(' ')[0]
 PORT = 5678
 
 # Local folder to save data
