@@ -11,13 +11,14 @@ import requests
 import subprocess
 import websockets
 
-print("Ready to receive AxiDraw commands via WebSocket")
-
 # ADDR = '10.0.1.19'
 # NOTE: This 'hostname -I' might not work on MacOS?
 temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-8')
 ADDR = temp.stdout.split(' ')[0]
 PORT = 5678
+
+greeting = 'Ready to receive AxiDraw commands via WebSocket… '
+print(f'{greeting} {ADDR}:{PORT}')
 
 # Local folder to save data
 local_folder = 'files/'
