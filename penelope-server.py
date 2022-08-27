@@ -17,7 +17,7 @@ temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-
 ADDR = temp.stdout.split(' ')[0]
 PORT = 5678
 
-greeting = 'Ready to receive AxiDraw commands via WebSocket… '
+greeting = 'Ready to receive AxiDraw commands via WebSockets |'
 print(f'{greeting} {ADDR}:{PORT}')
 
 # Local folder to save data
