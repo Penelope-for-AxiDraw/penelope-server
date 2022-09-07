@@ -12,6 +12,7 @@ import platform
 import websockets
 
 ADDR = platform.node()
+ADDR += '' if ADDR.endswith('.local') else '.local'
 PORT = 5678
 
 greeting = 'Ready to receive AxiDraw commands via WebSockets |'
