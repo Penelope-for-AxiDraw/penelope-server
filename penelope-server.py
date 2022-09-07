@@ -8,13 +8,10 @@ import asyncio
 import json
 from pyaxidraw import axidraw 
 import requests
-import subprocess
+import platform
 import websockets
 
-# ADDR = '10.0.1.19'
-# NOTE: This 'hostname -I' might not work on MacOS?
-temp = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, encoding='utf-8')
-ADDR = temp.stdout.split(' ')[0]
+ADDR = platform.node()
 PORT = 5678
 
 greeting = 'Ready to receive AxiDraw commands via WebSockets |'
