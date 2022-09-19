@@ -8,34 +8,29 @@ import asyncio
 import json
 from pyaxidraw import axidraw 
 import requests
-import platform
 import websockets
+from constants import ADDR, PORT, LOCAL_FOLDER, MESSAGES
 
-ADDR = platform.node()
-ADDR += '' if ADDR.endswith('.local') else '.local'
-PORT = 5678
+ADDRESS = ADDR if ADDR.endswith('.local') else '{}.local'.format(ADDR)
 
 greeting = 'Ready to receive AxiDraw commands via WebSockets |'
-print(f'{greeting} {ADDR}:{PORT}')
-
-# Local folder to save data
-local_folder = 'files/'
+print(f"{MESSAGES['GREET']} {ADDRESS}:{PORT}")
 
 def get_file(remote_url, file_name):
   # Make http request for remote file data
   data = requests.get(remote_url + file_name)
   if(data.status_code == 404):
-    print('Something went wrong')
+    print(MESSAGES['OHNO'])
   else:
     # Save file data to local copy
-    with open(local_folder + file_name, 'wb') as file:
+    with open(LOCAL_FOLDER + file_name, 'wb') as file:
       file.write(data.content)
       # print('Downloaded the file')
 
 def axi_plot(file):
-  print('Plotting with AxiDraw!')
+  print(MESSAGES['PLOTTING'])
   ad = axidraw.AxiDraw()
-  ad.plot_setup(local_folder + file)
+  ad.plot_setup(LOCAL_FOLDER + file)
   ad.options.speed_pendown = 12
   ad.options.reordering = 1
   ad.plot_run()
@@ -69,11 +64,14 @@ async def listen_messages(websocket):
         msg = await websocket.recv()
         await websocket.send(json.dumps({'greeting': 'Hi, received your command.'}))
         if (msg == 'get_name'):
+            device_name = 'no device name'
             try:
                 device_name = get_name()
-                status = json.dumps({'deviceName': device_name})
             except:
-                status = json.dumps({'deviceName': 'no device name'})
+                pass
+            finally:
+                status = json.dumps({'deviceName': device_name})
+
             await websocket.send(status)
         elif (msg == 'get_pen_state'):
             # device_name = get_name()
@@ -85,7 +83,7 @@ async def listen_messages(websocket):
                 process_command(msg)
 
             except (ValueError, KeyError, TypeError):
-                print("Data format error")
+                print(MESSAGES['FORMAT_ERROR'])
 
 def process_command(message):
     cmd = message.split('|')
@@ -104,7 +102,7 @@ def process_command(message):
         axi_plot(file_name)
 
 async def main():
-    async with websockets.serve(listen_messages, ADDR, PORT):
+    async with websockets.serve(listen_messages, ADDRESS, PORT):
         await asyncio.Future()  # run forever
 
 asyncio.run(main())
