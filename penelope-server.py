@@ -9,18 +9,18 @@ import json
 from pyaxidraw import axidraw 
 import requests
 import websockets
-from constants import ADDR, PORT, LOCAL_FOLDER, MESSAGES
+from constants import ADDR, PORT, LOCAL_FOLDER, MSG
 
 ADDRESS = ADDR if ADDR.endswith('.local') else '{}.local'.format(ADDR)
 
 greeting = 'Ready to receive AxiDraw commands via WebSockets |'
-print(f"{MESSAGES['GREET']} {ADDRESS}:{PORT}")
+print(f"{MSG['GREET']} {ADDRESS}:{PORT}")
 
 def get_file(remote_url, file_name):
   # Make http request for remote file data
   data = requests.get(remote_url + file_name)
   if(data.status_code == 404):
-    print(MESSAGES['OHNO'])
+    print(MSG['OHNO'])
   else:
     # Save file data to local copy
     with open(LOCAL_FOLDER + file_name, 'wb') as file:
@@ -28,7 +28,7 @@ def get_file(remote_url, file_name):
       # print('Downloaded the file')
 
 def axi_plot(file):
-  print(MESSAGES['PLOTTING'])
+  print(MSG['PLOTTING'])
   ad = axidraw.AxiDraw()
   ad.plot_setup(LOCAL_FOLDER + file)
   ad.options.speed_pendown = 12
@@ -83,7 +83,7 @@ async def listen_messages(websocket):
                 process_command(msg)
 
             except (ValueError, KeyError, TypeError):
-                print(MESSAGES['FORMAT_ERROR'])
+                print(MSG['FORMAT_ERROR'])
 
 def process_command(message):
     cmd = message.split('|')
