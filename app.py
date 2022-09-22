@@ -1,9 +1,11 @@
 from pyaxidraw import axidraw 
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from utils import axi_plot, get_device_name, get_file, get_pen_status, run_mode
 from constants import ALIGN, TOGGLE, MSG
 
 app = Flask(__name__)
+CORS(app)
 
 def process_json(content_type):
     if (content_type == 'application/json'):
@@ -23,7 +25,6 @@ def hello():
 def get_info():
   info_type = request.args.get('q')
   if (info_type == 'penState'):
-    return jsonify({'penUp': 42})
     pen_up = get_pen_status()
     return jsonify({'penUp': pen_up})
   elif (info_type == 'deviceName'):

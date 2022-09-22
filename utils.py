@@ -39,12 +39,16 @@ def run_mode(mode):
 
 
 def get_pen_status():
-    ad = axidraw.AxiDraw()
-    ad.interactive()
-    ad.connect()
-    # Query machine pen state
-    pen_up = ad.current_pen()
-    ad.disconnect()
+    pen_up = 'None'
+    try:
+      ad = axidraw.AxiDraw()
+      ad.interactive()
+      ad.connect()
+      # Query machine pen state
+      pen_up = ad.current_pen()
+      ad.disconnect()
+    except:
+      pass
     return str(pen_up)
 
 
