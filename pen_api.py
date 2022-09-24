@@ -1,8 +1,10 @@
-from pyaxidraw import axidraw 
+#!/usr/bin/env python3
+
+from pyaxidraw import axidraw
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from utils import axi_plot, get_device_name, get_file, get_pen_status, run_mode
-from constants import ALIGN, TOGGLE, MSG
+from constants import ALIGN, MSG, TOGGLE
 
 app = Flask(__name__)
 CORS(app)
@@ -13,7 +15,6 @@ def process_json(content_type):
         return json
     else:
         return 'Content-Type not supported!'
-
 
 # ROUTES -----------------------
 

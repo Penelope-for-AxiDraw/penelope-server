@@ -3,7 +3,7 @@
 import json
 from pyaxidraw import axidraw 
 import requests
-from constants import PORT, LOCAL_FOLDER, MSG
+from constants import LOCAL_FOLDER, MSG
 
 
 # + + + + + + + + + + + + + + + +

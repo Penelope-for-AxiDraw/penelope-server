@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-
-import platform
-
-ADDR = platform.node()
-PORT = 5678
 LOCAL_FOLDER = 'files/'
 MSG = {
   'FORMAT_ERROR': 'Data format error',
