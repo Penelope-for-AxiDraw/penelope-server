@@ -27,6 +27,10 @@ def axi_plot(file_name):
   ad.plot_setup(LOCAL_FOLDER + file_name)
   ad.options.speed_pendown = 24
   ad.options.reordering = 1
+  webhook_url = get_notify()
+  if(webhook_url):
+    ad.options.webhook = True
+    ad.options.webhook_url = webhook_url
   ad.plot_run()
 
 
@@ -67,3 +71,22 @@ def get_device_name():
 
     return device_name
 
+'''
+We can use AxiDraw's built-in support for webhooks in order to receive notifications
+when plotting is complete. First you'll need to use a third-party service to create a
+webhook. Then, paste its URL into the 'webhook_base_url' field in config.json. (This
+repo includes an example config file for reference). For information about how to
+create a webhook with IFTTT, check out https://wiki.evilmadscientist.com/Webhooks.
+'''
+def get_notify():
+  config_filename = 'config.json'
+  try:
+    with open(config_filename, 'r') as config_file:
+      info = json.load(config_file)
+  except:
+    return None
+
+  if 'webhook_base_url' in info.keys():
+    return info['webhook_base_url']
+
+  return None
