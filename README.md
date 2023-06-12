@@ -16,7 +16,7 @@ $ pip install -U flask-cors
 Although not required, it might be useful to install these libraries to a <a href="https://docs.python.org/3/tutorial/venv.html" target="_blank">Python virtual environment</a>. Once the dependencies are installed, you can run the app from the command line. From the server's directory:
 
 ```bash
-$ flask run --host=127.0.0.1 --port=5000
+$ flask run --app pen_api --host=127.0.0.1 --port=5000
 ```
 
 The host in the above case `127.0.0.1` is the default host of your locally-running Penelope web app. At this point, the server is ready to receive API calls via port 5000. If you need to change the port, you'll need to update it in the above `flask run` command and inside the <a href="https://github.com/Penelope-for-AxiDraw/penelope/blob/main/src/constants/index.ts" target="_blank">NextJS app</a>.
